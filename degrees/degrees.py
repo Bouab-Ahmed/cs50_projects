@@ -69,10 +69,12 @@ def main():
 
     source = person_id_for_name(input("Name: "))
     if source is None:
-        sys.exit("Person not found.")
+        sys.exit("Person 1 not found.")
     target = person_id_for_name(input("Name: "))
     if target is None:
-        sys.exit("Person not found.")
+        sys.exit("Person 2 not found.")
+
+    # shortest_path(source, target)
 
     path = shortest_path(source, target)
 
@@ -98,7 +100,31 @@ def shortest_path(source, target):
     """
 
     # TODO
-    raise NotImplementedError
+    open_set = QueueFrontier()
+    closed_set = set()
+
+    start = Node(source, None, None)
+    open_set.add(start)
+
+    while not open_set.empty():
+        current = open_set.remove()
+        if is_goal(current.state, target):
+            actions = []
+            while current.parent is not None:
+                actions.append((current.action, current.parent))
+            actions.reverse()
+            return actions
+
+        closed_set.add(current.state)
+
+        neighbors = neighbors_for_person(current.state)
+
+        for movie_id, person_id in neighbors:
+            if person_id not in closed_set:
+                child = Node(person_id, current, movie_id)
+                open_set.add(child)
+
+    return None
 
 
 def person_id_for_name(name):
@@ -139,6 +165,12 @@ def neighbors_for_person(person_id):
         for person_id in movies[movie_id]["stars"]:
             neighbors.add((movie_id, person_id))
     return neighbors
+
+
+def is_goal(source, target):
+    if source == target:
+        return True
+    return False
 
 
 if __name__ == "__main__":
