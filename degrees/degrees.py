@@ -100,7 +100,7 @@ def shortest_path(source, target):
     """
 
     # TODO
-    open_set = QueueFrontier()
+    open_set = QueueFrontier()  # or we can use stackFrontier for dfs algorithm
     closed_set = set()
 
     start = Node(source, None, None)
@@ -111,7 +111,8 @@ def shortest_path(source, target):
         if is_goal(current.state, target):
             actions = []
             while current.parent is not None:
-                actions.append((current.action, current.parent))
+                actions.append((current.action, current.state))
+                current = current.parent
             actions.reverse()
             return actions
 
